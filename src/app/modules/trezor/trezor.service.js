@@ -1,4 +1,5 @@
 import nem from 'nem-sdk';
+import TrezorConnect from 'trezor-connect';
 
 /** Service storing Trezor utility functions. */
 class Trezor {
@@ -18,6 +19,7 @@ class Trezor {
         // Service properties region //
 
         // End properties region //
+        TrezorConnect.manifest({ email: 'dev@symbol.dev', appUrl: 'https://symbol.dev' });
     }
 
     // Service methods region //
@@ -40,15 +42,18 @@ class Trezor {
     createAccount(network, index, label) {
         return new Promise((resolve, reject) => {
             const hdKeypath = this.bip44(network, index);
-
-            TrezorConnect.nemGetAddress(hdKeypath, network, (result) => {
+            TrezorConnect.nemGetAddress({
+                path: hdKeypath,
+                network: network,
+                showOnTrezor: true
+            }).then(function(result) {
                 if (result.success) {
                     resolve({
                         "brain": false,
                         "algo": "trezor",
                         "encrypted": "",
                         "iv": "",
-                        "address": result.address,
+                        "address": result.payload.address,
                         "label": label,
                         "network": network,
                         "child": "",
@@ -57,7 +62,7 @@ class Trezor {
                 } else {
                     reject(result.error);
                 }
-            });
+            })
         });
     }
 
@@ -66,9 +71,16 @@ class Trezor {
         const value = "0000000000000000000000000000000000000000000000000000000000000000";
 
         return new Promise((resolve, reject) => {
-            TrezorConnect.cipherKeyValue(account.hdKeypath, key, value, true, true, true, (result) => {
+            TrezorConnect.cipherKeyValue({
+                path: account.hdKeypath,
+                key: key,
+                value: value,
+                encrypt: true,
+                askOnEncrypt: true,
+                askOnDecrypt: true
+            }).then(function(result) {
                 if (result.success) {
-                    const privateKey = nem.utils.helpers.fixPrivateKey(result.value);
+                    const privateKey = nem.utils.helpers.fixPrivateKey(result.payload.value);
                     const keyPair = nem.crypto.keyPair.create(privateKey);
                     const publicKey = keyPair.publicKey.toString();
                     const address = nem.model.address.toAddress(publicKey, network);
@@ -81,15 +93,18 @@ class Trezor {
                 } else {
                     reject(result.error);
                 }
-            });
+            })
         });
     }
 
     serialize(transaction, account) {
         return new Promise((resolve, reject) => {
-            TrezorConnect.nemSignTx(account.hdKeypath, transaction, (result) => {
+            TrezorConnect.nemSignTransaction({
+                path: account.hdKeypath,
+                transaction: transaction
+            }).then(function(result) {
                 if (result.success) {
-                    resolve(result.message);
+                    resolve(result.payload);
                 } else {
                     reject({
                         "code": 0,
@@ -98,19 +113,24 @@ class Trezor {
                         }
                     });
                 }
-            });
+            })
+
         });
     }
 
     showAccount(account) {
         return new Promise((resolve, reject) => {
-            TrezorConnect.nemGetAddress(account.hdKeypath, account.network, (result) => {
+            TrezorConnect.nemGetAddress({
+                path: account.hdKeypath,
+                network: account.network,
+                showOnTrezor: true
+            }).then(function(result) {
                 if (result.success) {
-                    resolve(result.address);
+                    resolve(result.payload.address);
                 } else {
                     reject(result.error);
                 }
-            });
+            })
         });
     }
 
