@@ -60,7 +60,7 @@ class Trezor {
                         "hdKeypath": hdKeypath
                     });
                 } else {
-                    reject(result.error);
+                    reject(result.payload.error);
                 }
             })
         });
@@ -91,7 +91,7 @@ class Trezor {
                         publicKey
                     });
                 } else {
-                    reject(result.error);
+                    reject(result.payload.error);
                 }
             })
         });
@@ -109,7 +109,7 @@ class Trezor {
                     reject({
                         "code": 0,
                         "data": {
-                            "message": result.error
+                            "message": result.payload.error
                         }
                     });
                 }
@@ -128,7 +128,7 @@ class Trezor {
                 if (result.success) {
                     resolve(result.payload.address);
                 } else {
-                    reject(result.error);
+                    reject(result.payload.error);
                 }
             })
         });
