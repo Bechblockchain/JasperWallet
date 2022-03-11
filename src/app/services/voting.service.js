@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {TrezorAccount} from 'nem-trezor';
+import {TrezorAccount} from '../modules/trezor/trezorAccount';
 import nemsdk from 'nem-sdk';
 const nem = require('nem-library');
 const voting = require('nem-voting');
@@ -127,7 +127,7 @@ class Voting {
         let account = {};
         if (common.isHW) {
             if (this._Wallet.algo == "trezor") {
-                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath);
+                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, this._Trezor);
             }
         } else {
             account = nem.Account.createWithPrivateKey(common.privateKey);
@@ -349,7 +349,7 @@ class Voting {
         let account;
         if (common.isHW) {
             if (this._Wallet.algo == "trezor") {
-                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath);
+                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, this._Trezor);
             }
         } else {
             account = nem.Account.createWithPrivateKey(common.privateKey);
