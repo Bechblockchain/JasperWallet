@@ -42,7 +42,7 @@ export class TrezorAccount {
             }
             dto.fee = fee;
         }
-        return Observable.fromPromise(this._Trezor.serialize(dto, this));
+        return Observable.fromPromise(this._Trezor.serialize(dto, { hdKeypath: this.hdKeyPath }));
     }
 
     async signSerialTransactionsPromise(transactions) {
@@ -54,7 +54,7 @@ export class TrezorAccount {
         const signedTransactions = [];
         for (let i = 0; i < transactions.length; i++) {
             const keepSession = (i < transactions.length - 1);
-            const serialized = await this._Trezor.serialize(dtos[i], this.hdKeyPath, keepSession);
+            const serialized = await this._Trezor.serialize(dtos[i], { hdKeypath: this.hdKeyPath }, keepSession);
             signedTransactions.push(serialized);
         }
         return signedTransactions;
