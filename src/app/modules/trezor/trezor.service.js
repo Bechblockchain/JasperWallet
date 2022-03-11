@@ -44,7 +44,7 @@ class Trezor {
             const hdKeypath = this.bip44(network, index);
             TrezorConnect.nemGetAddress({
                 path: hdKeypath,
-                network: network,
+                network: network < 0 ? 256 + network : network,
                 showOnTrezor: true
             }).then(function(result) {
                 if (result.success) {
@@ -122,7 +122,7 @@ class Trezor {
         return new Promise((resolve, reject) => {
             TrezorConnect.nemGetAddress({
                 path: account.hdKeypath,
-                network: account.network,
+                network: account.network < 0 ? 256 + account.network : account.network,
                 showOnTrezor: true
             }).then(function(result) {
                 if (result.success) {
