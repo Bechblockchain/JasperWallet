@@ -138,6 +138,7 @@ class Voting {
         const broadcastData = poll.broadcast(account.publicKey, index);
         broadcastData.transactions = broadcastData.transactions.map((t) => {
             t.timeWindow = nem.TimeWindow.createFromDTOInfo(timeStamp, deadline);
+            t.fee = Math.floor(t.fee);
             return t;
         });
         const nodeSplit = this._Wallet.node.host.split("://");
