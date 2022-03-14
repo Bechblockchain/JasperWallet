@@ -1,3 +1,4 @@
+import { TransactionTypes } from 'nem-library';
 import nem from 'nem-sdk';
 import TrezorConnect from 'trezor-connect';
 
@@ -97,24 +98,44 @@ class Trezor {
         });
     }
 
-    serialize(transaction, account) {
-        return new Promise((resolve, reject) => {
-            TrezorConnect.nemSignTransaction({
-                path: account.hdKeypath,
-                transaction: transaction
-            }).then(function(result) {
-                if (result.success) {
-                    resolve(result.payload);
-                } else {
-                    reject({
-                        "code": 0,
-                        "data": {
-                            "message": result.payload.error
-                        }
-                    });
-                }
-            })
+    /**
+     * Adjusts importance transfer transaction to be compatible with Trezor
+     * 
+     * @param {Object} transaction - Transaction to adjust
+     * @returns the adjusted transaction or the same transaction (if not an importance transfer)
+     */
+    adjustImportanceTransferTransaction(transaction) {
+        if (transaction.type === TransactionTypes.IMPORTANCE_TRANSFER) {
+          return {
+              ...transaction,
+              importanceTransfer: {
+                mode: transaction.mode,
+                publicKey: transaction.remoteAccount,
+              },
+            }
+        }
+        return transaction;
+    }
 
+    serialize(transaction, account) {
+        const tx = this.adjustImportanceTransferTransaction(transaction);
+
+        return new Promise((resolve, reject) => {
+          TrezorConnect.nemSignTransaction({
+            path: account.hdKeypath,
+            transaction: tx,
+          }).then(function (result) {
+            if (result.success) {
+              resolve(result.payload);
+            } else {
+              reject({
+                code: 0,
+                data: {
+                  message: result.payload.error,
+                },
+              });
+            }
+          });
         });
     }
 
