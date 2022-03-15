@@ -127,7 +127,7 @@ class Voting {
         let account = {};
         if (common.isHW) {
             if (this._Wallet.algo == "trezor") {
-                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, this._Trezor);
+                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, nem.NEMLibrary.getNetworkType(), this._Trezor);
             }
         } else {
             account = nem.Account.createWithPrivateKey(common.privateKey);
@@ -348,7 +348,7 @@ class Voting {
         let account;
         if (common.isHW) {
             if (this._Wallet.algo == "trezor") {
-                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, this._Trezor);
+                account = new TrezorAccount(this._Wallet.currentAccount.address, this._Wallet.currentAccount.hdKeypath, nem.NEMLibrary.getNetworkType(), this._Trezor);
             }
         } else {
             account = nem.Account.createWithPrivateKey(common.privateKey);
