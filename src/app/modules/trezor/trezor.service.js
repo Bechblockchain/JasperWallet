@@ -20,7 +20,7 @@ class Trezor {
         // Service properties region //
 
         // End properties region //
-        TrezorConnect.manifest({ email: 'dev@symbol.dev', appUrl: 'https://symbol.dev' });
+        TrezorConnect.manifest({ email: 'maintainers@nem.io', appUrl: 'https://www.nem.io' });
     }
 
     // Service methods region //
@@ -40,12 +40,16 @@ class Trezor {
         return `m/44'/${coinType}'/${index}'/0'/0'`;
     }
 
+    adjustNetwork(network) {
+        return network < 0 ? 256 + network : network;
+    }
+
     createAccount(network, index, label) {
         return new Promise((resolve, reject) => {
             const hdKeypath = this.bip44(network, index);
             TrezorConnect.nemGetAddress({
                 path: hdKeypath,
-                network: network < 0 ? 256 + network : network,
+                network: this.adjustNetwork(network),
                 showOnTrezor: true
             }).then(function(result) {
                 if (result.success) {
@@ -106,13 +110,12 @@ class Trezor {
      */
     adjustImportanceTransferTransaction(transaction) {
         if (transaction.type === TransactionTypes.IMPORTANCE_TRANSFER) {
-          return {
-              ...transaction,
+            Object.assign(transaction, {
               importanceTransfer: {
                 mode: transaction.mode,
                 publicKey: transaction.remoteAccount,
               },
-            }
+            });
         }
         return transaction;
     }
@@ -143,7 +146,7 @@ class Trezor {
         return new Promise((resolve, reject) => {
             TrezorConnect.nemGetAddress({
                 path: account.hdKeypath,
-                network: account.network < 0 ? 256 + account.network : account.network,
+                network: this.adjustNetwork(account.network),
                 showOnTrezor: true
             }).then(function(result) {
                 if (result.success) {
