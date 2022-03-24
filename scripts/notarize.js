@@ -2,7 +2,7 @@ const { notarize } = require('electron-notarize');
 var appBundleId = require('../package.json').build.appId;
 
 
-// You will need to notarize the application if the "Developer ID Application" user is first time signing
+// You will need to notarize the application if the "Developer ID Certificate" is first time being used
 exports.default = async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context;  
   if (electronPlatformName !== 'darwin') {

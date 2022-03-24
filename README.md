@@ -54,7 +54,7 @@ If the circle next to `Node` is red, click on it and select another node from th
 
 <pre>gulp build-app</pre>
 
-6) For local use build NEM Wallet Electron apps (only Electron verision support Ledger wallets), default build for MacOS, Windows and Linux
+6) For local use, build NEM Wallet Electron apps (only Electron verision support Ledger wallets), default build for MacOS, Windows and Linux
 
 <pre>
 # create the release folder where the artifacts will be created
@@ -86,6 +86,10 @@ npm run release
 
     7.5 Run release
     <pre>npm run release</pre>
+
+    7.6 Validate if the app is signed with a Developer ID Certificate
+    
+    <pre>spctl -a -t exec -v ./release/mac/Nem\ Wallet.app</pre>
         
 
 ### Known issues ###
