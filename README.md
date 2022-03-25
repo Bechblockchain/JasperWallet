@@ -72,7 +72,7 @@ npm run release
 
     7.2 Extract the certificates and double click each one of them to add to the keychain (ask the team for private key password)
     
-    7.3 If `Developer ID Certificate` is signing the app for the first time then the app needs to be notarized and this is an automated step in the process.You'll need to enable notarization by setting the following env vars.(skip this step already signed before)
+    7.3 Starting with MacOS 10.14.5, all signed applications by new `Developer ID Certificate` will need to be notarized. This is an automated step in the process. You'll need to enable notarization by setting the following env vars.
 
     <pre>
     export DESKTOP_APP_NOTARIZE=true
@@ -87,10 +87,12 @@ npm run release
     7.5 Run release
     <pre>npm run release</pre>
 
-    7.6 Validate if the app is signed with a Developer ID Certificate
+    7.6 Validate if the app is signed with a `Developer ID Certificate` and notarized
     
-    <pre>spctl -a -t exec -v ./release/mac/Nem\ Wallet.app</pre>
-        
+    <pre>spctl -a -t exec -v ./release/mac/Nem\ Wallet.app
+    # Output(Success): ./release/mac/Nem Wallet.app: accepted source=Notarized Developer ID
+    # Output(Failure): ./release/mac/Nem Wallet.app: rejected source=Unnotarized Developer ID
+    </pre>
 
 ### Known issues ###
 

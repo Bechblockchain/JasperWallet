@@ -1,24 +1,23 @@
 const { notarize } = require('electron-notarize');
-var appBundleId = require('../package.json').build.appId;
+const appBundleId = require('../package.json').build.appId;
 
-
-// You will need to notarize the application if the "Developer ID Certificate" is first time being used
-exports.default = async function notarizing(context) {
+// You will need to notarize the application if the "Developer ID Certificate" is new
+exports.default = async (context) => {
   const { electronPlatformName, appOutDir } = context;  
   if (electronPlatformName !== 'darwin') {
-    console.log('Skipping notarizing because this is not a macOS build.');
+    console.log('Skipping notarization because this is not a macOS build.');
     return;
   } else if (process.env.DESKTOP_APP_NOTARIZE !== 'true') {
-    console.log('Skipping notarizing because DESKTOP_APP_NOTARIZE env is not set.');
+    console.log('Skipping notarization because DESKTOP_APP_NOTARIZE env is not set.');
     return;
   } else if (process.env.DESKTOP_APP_APPLE_ID === undefined || process.env.DESKTOP_APP_APPLE_PASSWORD === undefined) {
-    console.log('Skipping notarizing because DESKTOP_APP_APPLE_ID or DESKTOP_APP_APPLE_PASSWORD env are not set.');
+    console.log('Skipping notarization because DESKTOP_APP_APPLE_ID or DESKTOP_APP_APPLE_PASSWORD env is not set.');
     return;
   }
   const appName = context.packager.appInfo.productFilename;
   const appPath = `${appOutDir}/${appName}.app`;
 
-  console.log(`Notarizing ${appName} with bundleId[${appBundleId}] at ${appPath}`);
+  console.log(`Notarizing ${appName} with bundleId[${appBundleId}] at ${appPath} ... (This might take several minutes)`);
 
   return await notarize({
     appBundleId: appBundleId,
